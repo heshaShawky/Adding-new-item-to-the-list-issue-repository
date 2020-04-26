@@ -12,7 +12,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   final CommentsRepository commentsRepository;
 
   CommentsBloc(this.commentsRepository);
-  
+
   @override
   CommentsState get initialState => CommentsInitial();
 
@@ -25,16 +25,15 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     if (event is FetchComments) {
       yield CommentsLoading();
 
-      final comments = await commentsRepository.getAllComments(); 
+      final comments = await commentsRepository.getAllComments();
 
       yield CommentsLoaded(comments);
-    } 
+    }
 
     if (event is AddComment) {
       if (currentState is CommentsLoaded) {
-        List<Comment> comments = currentState.comments;
-
-        comments.add(
+        yield CommentsLoaded([
+          ...currentState.comments,
           Comment(
             content: event.content,
             createdAt: DateTime.now().toString(),
@@ -42,16 +41,11 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
               username: "hesham",
               registedAt: DateTime.now().toString(),
               email: null,
-              role: 'admin'
-            )
-          )
-        );
-
-        print(comments);
-
-        yield CommentsLoaded(comments);
+              role: 'admin',
+            ),
+          ),
+        ]);
       }
     }
-    
   }
 }
