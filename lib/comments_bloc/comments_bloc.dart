@@ -32,10 +32,8 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
 
     if (event is AddComment) {
       if (currentState is CommentsLoaded) {
-        List<Comment> comments = currentState.comments;
 
-        comments.add(
-          Comment(
+        yield CommentsLoaded([...currentState.comments, Comment(
             content: event.content,
             createdAt: DateTime.now().toString(),
             user: User(
@@ -44,12 +42,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
               email: null,
               role: 'admin'
             )
-          )
-        );
-
-        print(comments);
-
-        yield CommentsLoaded(comments);
+          )]);
       }
     }
     
