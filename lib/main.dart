@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:add_issue/comments_bloc/comments_bloc.dart';
 import 'package:add_issue/comments_repository.dart';
 import 'package:add_issue/user_bloc/user_bloc.dart';
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(
           value: UserBloc(
             userRepository: UserRepository(), 
-            authenticationBloc: AuthenticationBloc(userRepository: UserRepository())
+            authenticationBloc: BlocProvider.of<AuthenticationBloc>(context)
           ),
         )
       ],
@@ -82,6 +84,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  Completer<void> _completer;
+
+  @override
+  void initState() {
+    _completer = Completer();
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -95,28 +104,44 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Test App'),
       ),
-      body: BlocBuilder<CommentsBloc, CommentsState>(
+      body: BlocConsumer<CommentsBloc, CommentsState>(
+        listener: (context, state) {
+          if (state is CommentsLoaded) {
+            
+            _completer?.complete();
+            _completer = Completer();
+          }
+        },
         builder: (context, state) {
           if ( state is CommentsInitial || state is CommentsLoading ) {
             return Center(
               child: CircularProgressIndicator(),
             );
           } else if ( state is CommentsLoaded ) {
-            return ListView(
-              children: <Widget>[
-                ...state.comments.map((comment) { 
-                  return ListTile(
-                    leading: CircleAvatar(),
-                    title: Text(comment.content),
-                  );
-                }),
-                RaisedButton(
-                  child: Text('Add Comment'),
-                  onPressed: () {
-                    BlocProvider.of<CommentsBloc>(context).add(AddComment('The New Comment I wanna add'));
-                  }
-                )
-              ],
+            return RefreshIndicator(
+              onRefresh: () {
+                BlocProvider.of<CommentsBloc>(context).add(
+                  RefreshComments()
+                );
+
+                return _completer.future;
+              },
+              child: ListView(
+                children: <Widget>[
+                  ...state.comments.map((comment) { 
+                    return ListTile(
+                      leading: CircleAvatar(),
+                      title: Text(comment.body),
+                    );
+                  }),
+                  RaisedButton(
+                    child: Text('Add Comment'),
+                    onPressed: () {
+                      BlocProvider.of<CommentsBloc>(context).add(AddComment('The New Comment I wanna add'));
+                    }
+                  )
+                ],
+              ),
             );
           }
         },

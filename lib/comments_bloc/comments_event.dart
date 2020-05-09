@@ -9,6 +9,11 @@ class FetchComments extends CommentsEvent {
   List<Object> get props => null;
 }
 
+class RefreshComments extends CommentsEvent {
+  @override
+  List<Object> get props => null;
+}
+
 class AddComment extends CommentsEvent {
   final String content;
 

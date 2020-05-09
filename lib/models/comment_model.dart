@@ -1,81 +1,42 @@
 import 'package:equatable/equatable.dart';
 
 class Comment extends Equatable {
+  int postId;
   int id;
-  String createdAt;
-  String content;
-  User user;
+  String name;
+  String email;
+  String body;
 
-  Comment({this.id, this.createdAt, this.content, this.user});
+  Comment({this.postId, this.id, this.name, this.email, this.body});
 
   Comment.fromJson(Map<String, dynamic> json) {
+    postId = json['postId'];
     id = json['id'];
-    createdAt = json['createdAt'];
-    content = json['content'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    name = json['name'];
+    email = json['email'];
+    body = json['body'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['postId'] = this.postId;
     data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
-    data['content'] = this.content;
-    if (this.user != null) {
-      data['user'] = this.user.toJson();
-    }
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['body'] = this.body;
     return data;
   }
 
   @override
   List<Object> get props => [
-    id, 
-    createdAt,
-    content,
-    user
+    postId,
+    id,
+    name,
+    email,
+    body
   ];
+
+
 }
 
-class User {
-  int id;
-  Null email;
-  String registedAt;
-  String username;
-  String role;
-  Null image;
-  String password;
-  String salt;
 
-  User(
-      {this.id,
-      this.email,
-      this.registedAt,
-      this.username,
-      this.role,
-      this.image,
-      this.password,
-      this.salt});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    registedAt = json['registedAt'];
-    username = json['username'];
-    role = json['role'];
-    image = json['image'];
-    password = json['password'];
-    salt = json['salt'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['email'] = this.email;
-    data['registedAt'] = this.registedAt;
-    data['username'] = this.username;
-    data['role'] = this.role;
-    data['image'] = this.image;
-    data['password'] = this.password;
-    data['salt'] = this.salt;
-    return data;
-  }
-}

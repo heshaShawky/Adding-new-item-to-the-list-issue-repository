@@ -28,20 +28,19 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
       final comments = await commentsRepository.getAllComments(); 
 
       yield CommentsLoaded(comments);
-    } 
+    } else if (event is RefreshComments) {
+      final comments = await commentsRepository.getAllComments(); 
 
-    if (event is AddComment) {
+      yield CommentsLoaded(comments);
+    } else if (event is AddComment) {
       if (currentState is CommentsLoaded) {
 
         yield CommentsLoaded([...currentState.comments, Comment(
-            content: event.content,
-            createdAt: DateTime.now().toString(),
-            user: User(
-              username: "hesham",
-              registedAt: DateTime.now().toString(),
-              email: null,
-              role: 'admin'
-            )
+            body: event.content,
+            postId: 2,
+            name: '',
+            id: 2,
+            email: 'test@test.com'
           )]);
       }
     }
