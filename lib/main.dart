@@ -48,12 +48,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: CommentsBloc(CommentsRepository()),),
+        BlocProvider.value(
+          value: CommentsBloc(CommentsRepository()),
+        ),
         BlocProvider.value(
           value: UserBloc(
-            userRepository: UserRepository(), 
-            authenticationBloc: BlocProvider.of<AuthenticationBloc>(context)
-          ),
+              userRepository: UserRepository(),
+              authenticationBloc: BlocProvider.of<AuthenticationBloc>(context)),
         )
       ],
       child: MaterialApp(
@@ -63,15 +64,13 @@ class MyApp extends StatelessWidget {
         ),
         home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, state) {
-            
             if (state is AuthenticationUnauthenticated) {
               return LoginPage();
             }
-            
+
             return HomePage();
           },
         ),
-  
       ),
     );
   }
@@ -83,7 +82,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   Completer<void> _completer;
 
   @override
@@ -107,49 +105,45 @@ class _HomePageState extends State<HomePage> {
       body: BlocConsumer<CommentsBloc, CommentsState>(
         listener: (context, state) {
           if (state is CommentsLoaded) {
-            
             _completer?.complete();
             _completer = Completer();
           }
         },
         builder: (context, state) {
-          if ( state is CommentsInitial || state is CommentsLoading ) {
+          if (state is CommentsInitial || state is CommentsLoading) {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else if ( state is CommentsLoaded ) {
+          } else if (state is CommentsLoaded) {
             return RefreshIndicator(
               onRefresh: () {
-                BlocProvider.of<CommentsBloc>(context).add(
-                  RefreshComments()
-                );
+                BlocProvider.of<CommentsBloc>(context).add(RefreshComments());
 
                 return _completer.future;
               },
               child: ListView(
                 children: <Widget>[
-                  ...state.comments.map((comment) { 
+                  ...state.comments.map((comment) {
                     return ListTile(
                       leading: CircleAvatar(),
                       title: Text(comment.body),
                     );
                   }),
-                  RaisedButton(
-                    child: Text('Add Comment'),
-                    onPressed: () {
-                      BlocProvider.of<CommentsBloc>(context).add(AddComment('The New Comment I wanna add'));
-                    }
-                  )
                 ],
               ),
             );
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            BlocProvider.of<CommentsBloc>(context)
+                .add(AddComment('The New Comment I wanna add'));
+          }),
     );
   }
 }
-
 
 class LoginPage extends StatefulWidget {
   @override
@@ -157,7 +151,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-   TextEditingController _usernameController;
+  TextEditingController _usernameController;
   TextEditingController _passwordController;
 
   @override
@@ -186,41 +180,38 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          return Form(
-            child: Column(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'username'),
-                  controller: _usernameController,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'password'),
-                  controller: _passwordController,
-                  obscureText: true,
-                ),
-                RaisedButton(
-                  onPressed:
-                      () => state is! UserLoginLoading ? _onLoginButtonPressed(context) : null,
-                  child: Text('Login'),
-                ),
-                Container(
-                  child: state is UserLoginLoading
-                      ? CircularProgressIndicator()
-                      : null,
-                ),
-              ],
-            ),
-          );
-        },
-      )
-    );
+        appBar: AppBar(
+          title: Text('Login'),
+        ),
+        body: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            return Form(
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'username'),
+                    controller: _usernameController,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'password'),
+                    controller: _passwordController,
+                    obscureText: true,
+                  ),
+                  RaisedButton(
+                    onPressed: () => state is! UserLoginLoading
+                        ? _onLoginButtonPressed(context)
+                        : null,
+                    child: Text('Login'),
+                  ),
+                  Container(
+                    child: state is UserLoginLoading
+                        ? CircularProgressIndicator()
+                        : null,
+                  ),
+                ],
+              ),
+            );
+          },
+        ));
   }
-
-  
-
 }
