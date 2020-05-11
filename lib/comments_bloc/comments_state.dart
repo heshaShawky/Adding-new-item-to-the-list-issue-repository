@@ -1,10 +1,10 @@
 part of 'comments_bloc.dart';
 
-abstract class CommentsState extends Equatable {
+abstract class CommentsState {
   const CommentsState();
 
-  @override
-  List<Object> get props => [];
+  // @override
+  // List<Object> get props => [];
 }
 
 class CommentsInitial extends CommentsState {}
@@ -16,8 +16,8 @@ class CommentsLoaded extends CommentsState {
 
   const CommentsLoaded(this.comments);
 
-  @override
-  List<Object> get props => [comments];
+  // @override
+  // List<Object> get props => [comments];
 }
 
 class CommentsFailure extends CommentsState {
@@ -25,6 +25,6 @@ class CommentsFailure extends CommentsState {
 
   const CommentsFailure(this.errMsg);
 
-  @override
-  List<Object> get props => [errMsg];
+  // @override
+  // List<Object> get props => [errMsg];
 }

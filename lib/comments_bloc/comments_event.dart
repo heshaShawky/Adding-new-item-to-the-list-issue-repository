@@ -1,17 +1,17 @@
 part of 'comments_bloc.dart';
 
-abstract class CommentsEvent extends Equatable {
+abstract class CommentsEvent {
   const CommentsEvent();
 }
 
 class FetchComments extends CommentsEvent {
-  @override
-  List<Object> get props => null;
+  // @override
+  // List<Object> get props => null;
 }
 
 class RefreshComments extends CommentsEvent {
-  @override
-  List<Object> get props => null;
+  // @override
+  // List<Object> get props => null;
 }
 
 class AddComment extends CommentsEvent {
@@ -19,6 +19,6 @@ class AddComment extends CommentsEvent {
 
   const AddComment(this.content);
   
-  @override
-  List<Object> get props => [content];
+  // @override
+  // List<Object> get props => [content];
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:add_issue/comments_bloc/comments_bloc.dart';
 import 'package:add_issue/comments_repository.dart';
+import 'package:add_issue/test_bloc/test_bloc.dart';
 import 'package:add_issue/user_bloc/user_bloc.dart';
 import 'package:add_issue/user_repository.dart';
 import 'package:flutter/material.dart';
@@ -48,13 +49,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(
-          value: CommentsBloc(CommentsRepository()),
+        BlocProvider(
+          create: (_) => CommentsBloc(CommentsRepository()),
         ),
-        BlocProvider.value(
-          value: UserBloc(
+        BlocProvider(
+          create: (_) => UserBloc(
               userRepository: UserRepository(),
               authenticationBloc: BlocProvider.of<AuthenticationBloc>(context)),
+        ),
+        BlocProvider(
+          create: (_) => TestBloc()..add(StartTest()),
         )
       ],
       child: MaterialApp(
@@ -107,7 +111,10 @@ class _HomePageState extends State<HomePage> {
           if (state is CommentsLoaded) {
             _completer?.complete();
             _completer = Completer();
+            return;
           }
+          _completer?.complete();
+          _completer = Completer();
         },
         builder: (context, state) {
           if (state is CommentsInitial || state is CommentsLoading) {
